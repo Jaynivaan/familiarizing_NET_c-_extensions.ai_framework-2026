@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Phase1_Layer1_Csharp_20260411_API_BASICS/1.0.0": {
+        "runtime": {
+          "Phase1_Layer1_Csharp_20260411_API_BASICS.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Phase1_Layer1_Csharp_20260411_API_BASICS/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
