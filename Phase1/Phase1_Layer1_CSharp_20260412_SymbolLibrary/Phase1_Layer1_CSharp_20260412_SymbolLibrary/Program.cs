@@ -119,7 +119,7 @@ var symbols = new[]
 
 app.MapGet("/symbols", () => symbols);
 
-app.MapGet("/symbols/{name}", (string name) =>
+app.MapGet("/symbols/{name}", (string name , string? mode ) =>
 {
     //but ineed only one random meaning for each symbol displayed when the user search for a symbol by name
     //the each json object has 3 meanings but i want to display only one random meaning for each symbol when the user search for a symbol by name
@@ -128,19 +128,38 @@ app.MapGet("/symbols/{name}", (string name) =>
     var random = new Random();
 
     var result = symbols.FirstOrDefault(s => s.Name.ToLower() == name.ToLower());
-    if (result is not null)
+    if (result is null)
+        return Results.NotFound();
+    if (mode?.ToLower() == "all")
     {
-        int randomMeaning = random.Next(1, 4); // Generate a random number between 1 and 3
-        string selectedMeaning = randomMeaning switch
+        return Results.Ok(new
         {
+            Symbol = result.Name,
+            Meanings = new[] { result.Meaning1, result.Meaning2, result.Meaning3 },
+            Type = "All Meanings"
+        });
+
+    }
+    //random logic to select one of the meanings
+    int randomMeaning = Random.Shared.Next(1, 4); // Generate a random number between 1 and 3
+    string selectedMeaning = randomMeaning switch
+    {
             1 => result.Meaning1,
             2 => result.Meaning2,
             3 => result.Meaning3,
             _ => result.Meaning1
-        };
-        return Results.Ok(new { result.Name, Meaning = selectedMeaning });
-    }
-    return Results.NotFound();
+    };
+
+    return Results.Ok(new
+    {
+    //result.Name, Meaning = selectedMeaning
+        Symbol = result.Name,
+        Meaning = selectedMeaning,
+        Type = "Randomized"
+
+     });
+    
+    
     
 
 }
