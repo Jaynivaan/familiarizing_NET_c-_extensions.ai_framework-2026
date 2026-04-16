@@ -114,8 +114,12 @@ var symbols = new[]
 
 };
 
-// End point
 
+//storage
+var userSymbols = new List<object>();
+
+
+//GET  End point
 
 app.MapGet("/symbols", () => symbols);
 
@@ -125,7 +129,7 @@ app.MapGet("/symbols/{name}", (string name , string? mode ) =>
     //the each json object has 3 meanings but i want to display only one random meaning for each symbol when the user search for a symbol by name
     //for  that case i will use the random class to generate a random number between 1 and 3 and then use that number to select one of the meanings for each symbol
     //create a random number generator
-    var random = new Random();
+    //var random = new Random();
 
     var result = symbols.FirstOrDefault(s => s.Name.ToLower() == name.ToLower());
     if (result is null)
@@ -158,11 +162,27 @@ app.MapGet("/symbols/{name}", (string name , string? mode ) =>
         Type = "Randomized"
 
      });
-    
-    
-    
+        
 
 }
 );
+
+
+//POST End point
+app.MapPost("/symbols", (object symbol) =>
+    {
+        userSymbols.Add(symbol);
+        return Results.Ok(new
+        {
+            Message = "Symbol added successfully",
+            Data = symbol
+
+        });
+    });
+
+//add get to retrieve user added symbols
+app.MapGet("/user-symbols", () => userSymbols);
+
+
 
 app.Run();
