@@ -1,4 +1,16 @@
+using Microsoft.Extensions.AI;
+using OllamaSharp;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddSingleton<IChatClient>(sp =>
+{
+    return new OllamaApiClient(new Uri("http://localhost:11434"), "deepseek-r1:latest");
+}
+); 
+
 var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");
@@ -183,6 +195,13 @@ app.MapPost("/symbols", (object symbol) =>
 //add get to retrieve user added symbols
 app.MapGet("/user-symbols", () => userSymbols);
 
-
-
+//ai test endpoint
+app.MapGet("/ai/test", async (IChatClient chatClient) =>
+{
+    var response = await chatClient.GetResponseAsync("What is the meaning of life?");
+    return Results.Ok(new
+    {
+        Message= response.Text
+    });
+});
 app.Run();
