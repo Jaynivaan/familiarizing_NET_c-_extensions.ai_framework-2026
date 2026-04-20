@@ -28,7 +28,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
    options.UseSqlite(connectionString));
 //register our app service .
 //later this  service will coordinate chat logic, AI interactions, and database operations related to chat messages.
-builder.Services.AddScoped<ChatService>();
+builder.Services.AddHttpClient<ChatService>();
 
 var app = builder.Build();
 

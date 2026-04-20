@@ -1,0 +1,41 @@
+@page "/chat"
+@inject ChatService ChatService
+
+<PageTitle>Chat</PageTitle>
+<h3> AI chat </h3>
+
+
+<input @bind="userInput" placeholder="Type something..." />
+<button @onclick="Send">Send</button>
+
+@if (isLoading)
+{
+<p>Thinking...</p>
+}
+
+@if (!string.IsNullOrWhiteSpace(response))
+{
+    <p><strong> AI:</strong> @response</p>
+}
+
+@code {
+    private string userInput = "";
+    private string response = "";
+    private bool isLoading = false;
+
+    private async Task Send()
+    
+    {
+        if (string.IsNullOrWhiteSpace(userInput))// prevent sending empty messages
+        {
+            return;
+        }
+
+        isLoading = true;
+        await Task.Delay(500) ; // simulate thinking time 
+        response = await ChatService.SendMessage(userInput);
+        userInput = ""; // clear input after sending
+        isLoading = false;
+
+    }
+}
