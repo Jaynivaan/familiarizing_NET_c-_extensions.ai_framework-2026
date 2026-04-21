@@ -1,4 +1,5 @@
 @page "/chat"
+@rendermode InteractiveServer
 @inject ChatService ChatService
 
 <PageTitle>Chat</PageTitle>
@@ -10,7 +11,7 @@
 
 @if (isLoading)
 {
-<p>Thinking...</p>
+    <p>Thinking...</p>
 }
 
 @if (!string.IsNullOrWhiteSpace(response))
@@ -26,16 +27,31 @@
     private async Task Send()
     
     {
+        Console.WriteLine("Send button clicked with input: " + userInput); // Debug log
         if (string.IsNullOrWhiteSpace(userInput))// prevent sending empty messages
         {
+            response = "Please enter a message.";
             return;
         }
 
         isLoading = true;
-        await Task.Delay(500) ; // simulate thinking time 
-        response = await ChatService.SendMessage(userInput);
-        userInput = ""; // clear input after sending
-        isLoading = false;
+        response = "Button clicked, packing  message..."; // show immediate feedback
 
+        try
+        {
+            var result = await ChatService.SendMessage(userInput);// send message to the service
+            response = result; // update response with the result from the service
+            
+        }
+        catch(Exception ex)
+        {
+            response = "Error: " + ex.Message; // handle any errors 
+        }
+        finally
+        {
+            isLoading = false; // reset loading state
+            StateHasChanged(); // update UI with the response
+        }
+        Console.WriteLine("Response received: " + response); // Debug log
     }
 }

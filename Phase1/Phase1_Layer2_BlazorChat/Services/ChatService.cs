@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -8,23 +9,35 @@ public class ChatService
 {
     //this willlater hold chat logic, ollama calls logic, 
     //database save/load operations logic
-    private readonly HttpClient _Http;
+    private readonly HttpClient _http;
     
     public ChatService(HttpClient http)
     {
-        _Http = http;
+        _http = http;
     }
 
     public async Task<string> SendMessage (string message)
     {
         var request = new
         {
-            model = "deepseek-r1:32b",
+            model = "deepseek-r1:latest",
             prompt = message,
             stream = false
 
         };
-        var response = await _Http.PostAsJsonAsync("http://localhost:11434/api/generate", request);
+        HttpResponseMessage response = await _http.PostAsJsonAsync(
+            "http://localhost:11434/api/generate",                              //this is the endpoint for ollama api, we will call this endpoint to get response from ollama
+            request
+            );
+
+        if((int)response.StatusCode <200 || (int)response.StatusCode >=300) //this is another way to check if the response is successful or not, we check if the status code is between 200 and 299, if it is not, then we consider it as a failed response
+        {
+           
+            string rawError = await response.Content.ReadAsStringAsync();         //if the response is not successful, we read the error message from the response content and return it
+           
+            return $"Ollama call failed: {(int)response.StatusCode} | {rawError}";     //this will help us to debug the issue with ollama call, we can see the status code and the error message from the response content
+
+        }
         var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
         return result?.response ?? "No response from ai .";
     }
