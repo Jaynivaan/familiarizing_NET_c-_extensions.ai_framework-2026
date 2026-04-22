@@ -29,6 +29,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 //register our app service .
 //later this  service will coordinate chat logic, AI interactions, and database operations related to chat messages.
 builder.Services.AddHttpClient<ChatService>();
+builder.Services.AddScoped<MessageProcessingService>();//we register the MessageProcessingService as scoped because it may hold state related to a specific user interaction, such as formatting the AI response for a particular chat session, and we want to ensure that each user interaction gets its own instance of the service.
 
 var app = builder.Build();
 

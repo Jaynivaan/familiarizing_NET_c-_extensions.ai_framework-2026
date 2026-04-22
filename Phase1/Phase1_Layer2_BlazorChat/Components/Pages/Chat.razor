@@ -16,7 +16,9 @@
 
 @if (!string.IsNullOrWhiteSpace(response))
 {
-    <p><strong> AI:</strong> @response</p>
+    <div class="ai-response">
+        <p>@response</p>
+    </div>
 }
 
 @code {

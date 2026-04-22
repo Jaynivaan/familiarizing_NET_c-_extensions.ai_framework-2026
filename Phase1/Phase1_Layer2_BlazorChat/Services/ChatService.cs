@@ -10,10 +10,13 @@ public class ChatService
     //this willlater hold chat logic, ollama calls logic, 
     //database save/load operations logic
     private readonly HttpClient _http;
+    private readonly MessageProcessingService _messageProcessing;
+
     
-    public ChatService(HttpClient http)
+    public ChatService(HttpClient http, MessageProcessingService messageProcessing)
     {
         _http = http;
+        _messageProcessing = messageProcessing;
     }
 
     public async Task<string> SendMessage (string message)
@@ -39,7 +42,7 @@ public class ChatService
 
         }
         var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
-        return result?.response ?? "No response from ai .";
+        return  _messageProcessing.CleanAiResponse(result?.response ?? "No response from ai .");
     }
 
     private class  OllamaResponse
