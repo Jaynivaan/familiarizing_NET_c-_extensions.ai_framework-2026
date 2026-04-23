@@ -1,25 +1,43 @@
 using Phase2_Layer1_Blockchain_Basics.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Phase2_Layer1_Blockchain_Basics.Services
 {
     public class ChainService
     {
-        private readonly List<ConsciousEvent> _events = new List<ConsciousEvent>();
-        public IReadOnlyList<ConsciousEvent> Events => _events;
+       
+        private readonly ChainRecord _chain;
+
+        public ChainService(string ownerPublicKey)
+        {
+            _chain = new ChainRecord
+            {
+                OwnerPublicKey = ownerPublicKey
+            };
+        }
+
+        public string ChainId => _chain.ChainId;
+        public string OwnerPublicKey => _chain.OwnerPublicKey;
+        public DateTime CreatedAt => _chain.CreatedAt;
+        public IReadOnlyList<ConsciousEvent> Events => _chain.Events;
+
+        
 
         public void AddEvent(ConsciousEvent ev)
         {
-            ev.PreviousHash = _events.Count == 0 ? "GENESIS" : _events[_events.Count - 1].Hash;
+            ev.PreviousHash = _chain.Events.Count == 0 
+                ? "GENESIS" 
+                : _chain.Events[_chain.Events.Count - 1].Hash;
             ev.Hash = HashService.ComputeEventHash(ev);
-            _events.Add(ev);
+            _chain.Events.Add(ev);
         }
 
         public bool ValidateChain()
         {
-            for (int i = 0; i < _events.Count; i++)
+            for (int i = 0; i < _chain.Events.Count; i++)
             {
-                ConsciousEvent current = _events[i];
+                ConsciousEvent current = _chain.Events[i];
 
                 string recalculatedHash = HashService.ComputeEventHash(current);
 
@@ -32,17 +50,18 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
                 {
                     if (current.PreviousHash != "GENESIS")
                         return false;
-
                 }
                 else
                 {
 
-                    if (current.PreviousHash != _events[i - 1].Hash)
+                    if (current.PreviousHash != _chain.Events[i - 1].Hash)
                         return false;
                 }
             }
             return true;
         }
+        public ChainRecord GetChain()
+            { return _chain; }
 
     }
 }

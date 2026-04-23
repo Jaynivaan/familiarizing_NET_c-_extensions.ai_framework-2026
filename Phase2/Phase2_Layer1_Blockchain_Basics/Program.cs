@@ -1,6 +1,7 @@
-﻿using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.Win32.SafeHandles;
+﻿//using System.Security.Authentication;
+//using System.Security.Cryptography.X509Certificates;
+//using Microsoft.Win32.SafeHandles;
+using System;
 using Phase2_Layer1_Blockchain_Basics.Models;
 using Phase2_Layer1_Blockchain_Basics.Services;
 
@@ -29,8 +30,15 @@ if (!identityValid)
 Console.WriteLine($"Identity Verified: {identityValid}\n");
 Console.WriteLine("congrats!");
 
+
 //4.create chain
-ChainService chainService = new();
+ChainService chainService = new ChainService(identity.PublicKey);
+Console.WriteLine($"Chain Id: {chainService.ChainId}");
+Console.WriteLine($"Chain Owner (short): {chainService.OwnerPublicKey.Substring(0, 40)}...");
+Console.WriteLine($"Chain Created At: {chainService.CreatedAt}");
+Console.WriteLine();
+
+
 
 
 //5.record  first event
@@ -69,7 +77,7 @@ foreach (var ev in chainService .Events)
    Console.WriteLine($"Signature Ok: {SignatureService.Verify(ev.PublicKey, ev.Hash, ev.Signature)}");
 
 }
-Console.WriteLine("\n----------------------------------");
+Console.WriteLine("\n---------------------------------------");
 Console.WriteLine($"Chain Integrity Valid: {chainService.ValidateChain()}");
 
 //8. tamper test
