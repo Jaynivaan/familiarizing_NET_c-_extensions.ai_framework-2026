@@ -88,3 +88,22 @@ chainService.Events[0].Data = "I am tampering with the data.";
 chainService.Events[1].Signature = "FAKE_SIGNATURE"; // Invalidate the signature of the second event since it depends on the hash of the first event
 Console.WriteLine($"Changed Data: {chainService.Events[0].Data}");
 Console.WriteLine($"\nChain Integrity Valid after tampering: {chainService.ValidateChain()}");
+
+ChainStorageService.Save(chainService.GetChain());
+Console.WriteLine("\nChain saved to chain.json");
+
+Console.WriteLine("\n----Loading chain from file----");
+
+var loadedChain = ChainStorageService.Load();
+
+if  (loadedChain != null)
+{
+    Console.WriteLine($"Loaded Chain Id: {loadedChain.ChainId}");
+    Console.WriteLine($"Loaded Events Counts: {loadedChain.Events.Count}");
+
+}
+else
+{
+    Console.WriteLine("No chain found.");
+
+}
