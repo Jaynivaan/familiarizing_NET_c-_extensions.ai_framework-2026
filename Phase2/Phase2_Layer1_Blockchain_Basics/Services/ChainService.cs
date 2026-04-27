@@ -1,6 +1,8 @@
 using Phase2_Layer1_Blockchain_Basics.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 
 namespace Phase2_Layer1_Blockchain_Basics.Services
 {
@@ -8,13 +10,18 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
     {
        
         private readonly ChainRecord _chain;
-
+        //constructor 1
         public ChainService(string ownerPublicKey)
         {
             _chain = new ChainRecord
             {
                 OwnerPublicKey = ownerPublicKey
             };
+        }
+        //constructor 2
+        public ChainService (ChainRecord existingChain)
+        {
+            _chain = existingChain;
         }
 
         public string ChainId => _chain.ChainId;
@@ -26,6 +33,8 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
 
         public void AddEvent(ConsciousEvent ev)
         {
+            
+        
             ev.PreviousHash = _chain.Events.Count == 0 
                 ? "GENESIS" 
                 : _chain.Events[_chain.Events.Count - 1].Hash;
@@ -59,6 +68,14 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
                 }
             }
             return true;
+        }
+        public bool HasEvent (string actionType, string data)
+        {
+            return _chain.Events.Any(ev =>
+            ev.ActionType == actionType &&
+            ev.Data == data
+            );
+
         }
         public ChainRecord GetChain()
             { return _chain; }
