@@ -10,7 +10,7 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
         public static string ComputeEventHash(ConsciousEvent ev)
         {
             string raw =
-                $"{ev.ActionType}|{ev.Data}|{ev.TimeUtc:o}|{ev.PreviousHash}|{ev.PublicKey}";
+                $"{ev.ActionType}|{ev.Data}|{ev.TimeUtc:o}|{ev.PreviousHash}|{ev.PublicKey}|{ev.ChallengeId}|{ev.ChallengeNonce}";
 
             using (SHA256 sha = SHA256.Create())
             {

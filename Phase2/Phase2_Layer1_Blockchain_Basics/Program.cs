@@ -65,11 +65,18 @@ string challengeSignature = SignatureService.Sign(identity.PrivateKey, challenge
 //string challengeSignature = "FAKE_SIGNATURE";           //For testing invalid signature scenario
 bool identityValid = SignatureService.Verify(identity.PublicKey, challenge.Nonce, challengeSignature);
 
-if (!identityValid)
+//challenge expiration constraint
+bool challengeValid = ChallengeService.VerifyChallenge(challenge);
+
+if (!identityValid || !challengeValid)
 {
-    Console.WriteLine("Identity verification failed. Event Rejected. Exiting.");
-    return;
+    Console.WriteLine("Proof of Identity failed!!! Event Rejected...");
 }
+//if (!identityValid)
+//{
+//    Console.WriteLine("Identity verification failed. Event Rejected. Exiting.");
+//    return;
+//}
 
 Console.WriteLine($"Identity Verified: {identityValid}\n");
 Console.WriteLine("congrats!");
@@ -104,7 +111,10 @@ ConsciousEvent ev1 = new()
     ActionType = "AffirmationCompleted",
     Data = "I observe the world with curiosity and openness. ",
     TimeUtc = DateTime.UtcNow,
-    PublicKey = identity.PublicKey
+    PublicKey = identity.PublicKey,
+    TargetPresenceId = targetPresenceId,
+    ChallengeId = challenge.ChallengeId,
+    ChallengeNonce = challenge.Nonce
 };
 
 if (!chainService.HasEvent(ev1.ActionType, ev1.Data))
@@ -127,7 +137,10 @@ ConsciousEvent ev2 = new()
     ActionType = "affirmationCompleted",
     Data = "I am grateful for the opportunities to learn and grow. ",
     TimeUtc = DateTime.UtcNow,
-    PublicKey = identity.PublicKey
+    PublicKey = identity.PublicKey,
+    TargetPresenceId = targetPresenceId,
+    ChallengeId = challenge.ChallengeId,
+    ChallengeNonce = challenge.Nonce
 };
 if (!chainService.HasEvent(ev2.ActionType, ev2.Data))
 {

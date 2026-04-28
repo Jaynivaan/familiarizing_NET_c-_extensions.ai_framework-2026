@@ -13,9 +13,24 @@ namespace Phase2_Layer1_Blockchain_Basics.Services
 
             return new ChallengeRecord
             {
-            Nonce = Convert.ToHexString(bytes),
-                CreatedAtUtc = DateTime.UtcNow
+                Nonce = Convert.ToHexString(bytes),
+                CreatedAtUtc = DateTime.UtcNow,
+                ExpiresAtUtc = DateTime.UtcNow.AddMinutes(2),
+                Used = false
             };
+        }
+
+        public static bool VerifyChallenge(ChallengeRecord challenge)
+        {
+            //
+            if (challenge == null)
+                return false;
+            if (challenge.Used)
+                return false;
+            if (DateTime.UtcNow > challenge.ExpiresAtUtc)
+                return false;
+            challenge.Used = true;
+            return true;
         }
     }
 }

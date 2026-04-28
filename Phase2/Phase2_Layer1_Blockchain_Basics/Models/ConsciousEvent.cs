@@ -13,6 +13,9 @@ namespace Phase2_Layer1_Blockchain_Basics.Models
         public string Signature { get; set; } = "";
         public string PublicKey { get; set; } = "";
 
+        public string ChallengeId { get; set; } = "";
+        public string ChallengeNonce { get; set; } = "";
+
         public string TargetPresenceId { get; set; } = "";
 
 
